@@ -49,7 +49,7 @@ export default {
     username: null,
     otherMessages: null,
     userMessage: null,
-    messageRules: [v => v.length <= 100 || "Username must be shorter"]
+    messageRules: [v => v.length <= 100 || "Word limit reached"]
   }),
   mounted() {
     this.username = this.userData;
@@ -69,6 +69,9 @@ export default {
       let hours = currentDate.getHours();
       let minutes = currentDate.getMinutes();
       let deit = hours + ":" + minutes;
+      if (this.userMessage.length > 100) {
+        return;
+      }
       const message = {
         userId: this.userData,
         messageText: this.userMessage,
