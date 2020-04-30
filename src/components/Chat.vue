@@ -127,7 +127,7 @@ export default {
 }
 .chatCard {
   border-color: #9a62e4;
-  opacity: 100%;
+  opacity: 1;
   max-width: 45vw;
   border-radius: 35px !important;
 }

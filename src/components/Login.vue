@@ -63,7 +63,7 @@ export default {
   margin-left: 40%;
   margin-top: 9%;
   background-color: #9a62e4;
-  opacity: 50%;
+  opacity: 0.5;
   border-radius: 35px !important;
 }
 .loginText {
