@@ -49,7 +49,7 @@ export default {
     username: null,
     otherMessages: null,
     userMessage: null,
-    messageRules: [v => v.length <= 100 || "Username must be shorter"]
+    messageRules: [v => v.length <= 100 || "Message characted limit exceeded"]
   }),
   mounted() {
     this.username = this.userData;
