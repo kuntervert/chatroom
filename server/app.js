@@ -12,7 +12,13 @@ const app = express();
 
 app.use(
 	cors({
-		origin: [ 'http://localhost:3001', 'http://localhost:3000', 'http://localhost:3002', 'http://www.devert.ee' ]
+		origin: [
+			'http://localhost:3001',
+			'http://localhost:3000',
+			'http://localhost:3002',
+			'https://www.devert.ee',
+			'https://www.devert.ee'
+		]
 	})
 );
 // app.use(cookieParser());
