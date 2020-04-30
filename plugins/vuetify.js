@@ -6,6 +6,18 @@ import 'vuetify/dist/vuetify.min.css';
 
 Vue.use(Vuetify);
 
-const opts = {};
+const vuetify = new Vuetify({
+	theme: {
+		dark: false,
+		themes: {
+			dark: {
+				primary: '#FA98CB'
+			},
+			light: {
+				primary: '#D5AAFC'
+			}
+		}
+	}
+});
 
-export default new Vuetify(opts);
+export default vuetify;

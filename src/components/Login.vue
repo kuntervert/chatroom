@@ -1,23 +1,30 @@
 <template>
-  <v-card class="loginCard">
-    <v-container>
-      <v-row>
-        <v-col>
-          <v-text-field
-            class="loginText"
-            v-on:keyup.enter="testLogin"
-            single-line
-            rounded
-            v-model="username"
-            :rules="nameRules"
-            label="Username"
-            hide-details="true"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-btn class="loginBtn" @keydown.enter="testLogin()" @click="testLogin()">Login</v-btn>
-    </v-container>
-  </v-card>
+  <div>
+    <v-row>
+      <h1 style="margin-left: 41%;">Vue Chatroom</h1>
+    </v-row>
+    <v-row>
+      <v-card class="loginCard">
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field
+                class="loginText"
+                v-on:keyup.enter="testLogin"
+                single-line
+                rounded
+                v-model="username"
+                :rules="nameRules"
+                label="Username"
+                hide-details="true"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-btn class="loginBtn" @keydown.enter="testLogin()" @click="testLogin()">Login</v-btn>
+        </v-container>
+      </v-card>
+    </v-row>
+  </div>
 </template>
 
 <script>
@@ -54,7 +61,7 @@ export default {
 .loginCard {
   max-width: 15%;
   margin-left: 40%;
-  margin-top: 15%;
+  margin-top: 9%;
   background-color: #9a62e4;
   opacity: 50%;
   border-radius: 35px !important;
