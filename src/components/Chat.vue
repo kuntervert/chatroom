@@ -76,7 +76,7 @@ export default {
       };
       this.userMessage = null;
       await axios
-        .post("http://localhost:3001/api/user/send", message)
+        .post("http://localhost:3000/api/user/send", message)
         .then(response => response.data);
 
       this.getMessages();
@@ -84,7 +84,7 @@ export default {
     async getMessages() {
       let messageData = null;
       await axios
-        .get("http://localhost:3001/api/user/messages")
+        .get("http://localhost:3000/api/user/messages")
         .then(response => {
           let msgs = response.data;
           this.messageData = msgs.slice(-15);

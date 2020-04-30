@@ -38,7 +38,7 @@ export default {
       };
       try {
         await axios
-          .post("http://localhost:3001/api/user/login", userInfo)
+          .post("http://localhost:3000/api/user/login", userInfo)
           .then(response => response.data);
         await this.login(userInfo);
         this.$router.push("/chat");
