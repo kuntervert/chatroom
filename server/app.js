@@ -21,7 +21,7 @@ app.use(
 app.use('/api', router);
 
 // Start express application
-app.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
+app.listen(process.env.PORT || 5000, () => console.log(`App listening on port ${process.env.PORT}`));
 
 // Export app
 module.exports = app;
