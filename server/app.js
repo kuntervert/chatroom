@@ -30,21 +30,15 @@ http.listen(process.env.PORT, () => console.log(`App listening on port ${process
 var allUsers = [];
 io.sockets.on('connection', function(socket) {
    allUsers.push(socket);
-
+	io.emit('usersConnected', this.allUsers.length)
    socket.on('disconnect', function() {
-      console.log('Got disconnect!');
-
-      var i = allUsers.indexOf(socket);
-      allUsers.splice(i, 1);
+	console.log('Got disconnect!');
+	var i = allUsers.indexOf(socket);
+	allUsers.splice(i, 1);
+	io.emit('usersConnected', this.allUsers.length)
    });
 });
 
-io.on('connection', function (socket) {
-    io.emit('usersConnected', this.allUsers)
-});
-io.on('disconnect', function (socket) {
-    io.emit('usersDisconnected', this.allUsers)
-});
 
 
 const Message = require('../server/models/Message');

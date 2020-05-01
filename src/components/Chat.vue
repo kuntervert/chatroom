@@ -2,7 +2,10 @@
   <div style>
     <v-row>
       <h3>Logged in as: {{userData}}</h3>
-      <h4>Users online: {{userCount}}</h4>
+
+    </v-row>
+    <v-row>
+          <h4>Users online: {{userCount}}</h4>
     </v-row>
     <v-card outlined class="chatCard">
       <perfect-scrollbar style="max-width: 45vw; background-color: #EFDEFF;">
@@ -97,9 +100,6 @@ export default {
     },
     usersWatch() {
       socket.on('usersConnected', data => {
-      this.userCount = data
-    });
-    socket.on('usersDisconnected', data => {
       this.userCount = data
     });
     },
