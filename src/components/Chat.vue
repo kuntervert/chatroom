@@ -61,6 +61,7 @@ export default {
     username: null,
     otherMessages: null,
     userMessage: null,
+    messageWathcer: global.messageWatcher,
     messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
   }),
   mounted() {
@@ -115,6 +116,9 @@ export default {
   },
   updated() {
     this.scroll();
+  },
+  watch: {
+    messageWatcher: this.getMessages()
   }
 };
 </script>

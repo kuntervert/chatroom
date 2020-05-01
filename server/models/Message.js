@@ -1,5 +1,5 @@
 const mongoose = require('../database');
-
+global.messageWatcher = 1;
 // Define schema
 const messageSchema = mongoose.Schema({
 	userId: {
@@ -18,6 +18,18 @@ const messageSchema = mongoose.Schema({
 
 // Model
 const Message = mongoose.model('Message', messageSchema);
+
+Message.watch([
+	{
+		$match: {
+			operationType: 'insert'
+		}
+	}
+]).on('change', (data) => {
+	if (data) {
+		global.messageWatcher += Math.random();
+	}
+});
 
 // Export model
 module.exports = Message;
