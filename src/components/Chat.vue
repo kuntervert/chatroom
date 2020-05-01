@@ -5,7 +5,7 @@
 
     </v-row>
     <v-row>
-          <h4>Users online: {{userCount}}</h4>
+          <h4>Users online: {{connections}}</h4>
     </v-row>
     <v-card outlined class="chatCard">
       <perfect-scrollbar style="max-width: 45vw; background-color: #EFDEFF;">
@@ -69,12 +69,15 @@ export default {
     username: null,
     otherMessages: null,
     userMessage: null,
-    userCount: null,
+    connections: 0,
     messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
   }),
   created() {
     this.messageWatch()
     this.usersWatch()
+     socket.on('connections', (data) => {
+                this.connections = data;
+            });
   },
   mounted() {
     this.username = this.userData;
@@ -180,5 +183,9 @@ export default {
 }
 .msgRow {
   max-width: 60%;
+}
+
+@media only screen and (max-width: 600px) {
+
 }
 </style>

@@ -28,9 +28,10 @@ var io = require('socket.io')(http);
 http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 
 io.on('connection', (socket) => {
-	var total=io.engine.clientsCount;
-	socket.emit('getCount',total)
+	socket.emit('connections', Object.keys(io.sockets.connected).length);
+	console.log(Object.keys(io.sockets.connected).length)
  });
+
 
 const Message = require('../server/models/Message');
 Message.watch([
