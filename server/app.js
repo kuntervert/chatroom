@@ -16,7 +16,8 @@ app.use(
 			'http://localhost:3002',
 			'http://www.devert.ee',
 			'https://www.devert.ee',
-			'http://devert.ee'
+			'http://devert.ee',
+			'https://devert.ee'
 		]
 	})
 );
