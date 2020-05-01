@@ -47,15 +47,17 @@
     </v-row>
   </div>
 </template>
-
+<script src="/socket.io/socket.io.js"></script>
 <script>
 import axios from "axios";
 import { mapGetters } from "vuex";
 import { PerfectScrollbar } from "vue2-perfect-scrollbar";
+import io from 'socket.io-client';
 
-
+const socket = io('http://localhost:3000');
 
 export default {
+  
   components: {
     PerfectScrollbar
   },
@@ -63,21 +65,32 @@ export default {
     username: null,
     otherMessages: null,
     userMessage: null,
-    messageWatch: window.messageWatcher,
     messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
   }),
+  created() {
+    this.messageWatch()
+  },
   mounted() {
     this.username = this.userData;
     this.getMessages();
+    
   },
   computed: {
     ...mapGetters(["userData"])
+    
   },
   methods: {
     scroll: function() {
       document.getElementById("container").scrollTop = document.getElementById(
         "container"
       ).scrollHeight;
+    },
+    messageWatch() {
+      socket.on('message', data => {
+      console.log("new mes message")
+      console.log(data)
+      this.getMessages()
+    });
     },
     async sendMessages() {
       var currentDate = new Date();
@@ -99,26 +112,24 @@ export default {
       }
       this.userMessage = null;
       await axios
-        .post("/api/user/send", message)
+        .post("http://localhost:3000/api/user/send", message)
         .then(response => response.data);
-
       this.getMessages();
       this.scroll();
     },
     async getMessages() {
       let messageData = null;
-      await axios.get("/api/user/messages").then(response => {
+      await axios.get("http://localhost:3000/api/user/messages").then(response => {
         let msgs = response.data;
         this.messageData = msgs.slice(-15);
-        console.log(messageData);
       });
       this.otherMessages = this.messageData;
     }
   },
   updated() {
     this.scroll();
-  },
 
+  },
 };
 </script>
 
