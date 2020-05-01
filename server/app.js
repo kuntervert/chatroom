@@ -6,8 +6,7 @@ const cors = require('cors');
 
 // Initialize express
 const app = express();
-var http = require( "http" ).createServer( app );
-var io = require('socket.io')(http);
+
 
 app.use(
 	cors({
@@ -24,7 +23,8 @@ app.use(
 // API router
 app.use('/api', router);
 // Start express application
-
+var http = require( "http" ).createServer( app );
+var io = require('socket.io')(http);
 http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 
 
