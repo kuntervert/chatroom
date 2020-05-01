@@ -99,7 +99,7 @@ export default {
     });
     },
     usersWatch() {
-      socket.on('usersConnected', data => {
+      socket.on('getCount', data => {
       this.userCount = data
     });
     },

@@ -27,6 +27,10 @@ var http = require( "http" ).createServer( app );
 var io = require('socket.io')(http);
 http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 
+io.on('connection', (socket) => {
+	var total=io.engine.clientsCount;
+	socket.emit('getCount',total)
+ });
 
 const Message = require('../server/models/Message');
 Message.watch([
