@@ -54,7 +54,7 @@ import { mapGetters } from "vuex";
 import { PerfectScrollbar } from "vue2-perfect-scrollbar";
 import io from 'socket.io-client';
 
-const socket = io();
+const socket = io('http://localhost:3000');
 
 export default {
   
