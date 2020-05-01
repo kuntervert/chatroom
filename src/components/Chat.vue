@@ -2,6 +2,7 @@
   <div style>
     <v-row>
       <h3>Logged in as: {{userData}}</h3>
+      <h4>Users online: {{userCount}}</h4>
     </v-row>
     <v-card outlined class="chatCard">
       <perfect-scrollbar style="max-width: 45vw; background-color: #EFDEFF;">
@@ -65,10 +66,12 @@ export default {
     username: null,
     otherMessages: null,
     userMessage: null,
+    userCount: null,
     messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
   }),
   created() {
     this.messageWatch()
+    this.usersWatch()
   },
   mounted() {
     this.username = this.userData;
@@ -92,6 +95,14 @@ export default {
       this.getMessages()
     });
     },
+    usersWatch() {
+      socket.on('usersConnected', data => {
+      this.userCount = data
+    });
+    socket.on('usersDisconnected', data => {
+      this.userCount = data
+    });
+    },
     async sendMessages() {
       var currentDate = new Date();
       let deit = null;
@@ -102,14 +113,18 @@ export default {
       } else {
         deit = hours + ":" + minutes;
       }
+      if (this.userMessage === "") {
+        return
+      }
+      if (this.userMessage.length > 200) {
+        return;
+      }
       const message = {
         userId: this.userData,
         messageText: this.userMessage,
         messageDate: deit
       };
-      if (this.userMessage.length > 200) {
-        return;
-      }
+      
       this.userMessage = null;
       await axios
         .post("/api/user/send", message)
