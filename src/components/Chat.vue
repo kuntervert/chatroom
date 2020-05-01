@@ -33,7 +33,7 @@
         </v-container>
 
       </perfect-scrollbar>
-              <small class="text-white">{{typing}} is typing</small>
+              <small v-if="typing" class="text-white">{{typing}} is typing</small>
     </v-card>
     <v-row>
       <v-col class="inputCol">
