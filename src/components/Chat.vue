@@ -52,21 +52,8 @@
 import axios from "axios";
 import { mapGetters } from "vuex";
 import { PerfectScrollbar } from "vue2-perfect-scrollbar";
-const Message = require("../../server/models/Message");
 
-window.messageWatcher = 0;
 
-Message.watch([
-  {
-    $match: {
-      operationType: "insert"
-    }
-  }
-]).on("change", data => {
-  if (data) {
-    window.messageWatcher += Math.random();
-  }
-});
 
 export default {
   components: {
@@ -131,9 +118,7 @@ export default {
   updated() {
     this.scroll();
   },
-  watch: {
-    messageWatch: this.getMessages()
-  }
+
 };
 </script>
 
