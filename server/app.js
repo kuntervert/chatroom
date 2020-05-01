@@ -24,9 +24,9 @@ app.use(
 // API router
 app.use('/api', router);
 // Start express application
-var http = require( "http" ).createServer( app );
-var io = require('socket.io')(http);
-http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
+var https = require( "https" ).createServer( app );
+var io = require('socket.io')(https);
+https.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 
 io.on('connection', (socket) => {
 	socket.emit('connections', Object.keys(io.sockets.connected).length);
