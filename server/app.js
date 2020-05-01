@@ -9,18 +9,18 @@ const app = express();
 var http = require( "http" ).createServer( app );
 var io = require('socket.io')(http);
 
-const whitelist = ['http://localhost:3000', 'http://localhost:3001','http://www.devert.ee',
-'https://www.devert.ee' ];
-const corsOptions = {
-  credentials: true, // This is important.
-  origin: (origin, callback) => {
-    if(whitelist.includes(origin))
-      return callback(null, true)
-
-      callback(new Error('Not allowed by CORS'));
-  }
-}
-app.use(cors(corsOptions));
+app.use(
+	cors({
+		origin: [
+			'http://localhost:3001',
+			'http://localhost:3000',
+			'http://localhost:3002',
+			'http://www.devert.ee',
+			'https://www.devert.ee',
+			'http://devert.ee'
+		]
+	})
+);
 // API router
 app.use('/api', router);
 // Start express application
