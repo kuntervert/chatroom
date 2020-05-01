@@ -10,7 +10,7 @@ import SocketIO from "socket.io-client"
 Vue.use(PerfectScrollbar);
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: SocketIO('http://localhost:3000'), //options object is Optional
+    connection: SocketIO('http://devert.ee:3000'), //options object is Optional
     vuex: {
       store,
       actionPrefix: "SOCKET_",
