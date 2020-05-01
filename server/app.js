@@ -27,19 +27,6 @@ var http = require( "http" ).createServer( app );
 var io = require('socket.io')(http);
 http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 
-var allUsers = [];
-io.sockets.on('connection', function(socket) {
-   allUsers.push(socket);
-	io.emit('usersConnected', this.allUsers.length)
-   socket.on('disconnect', function() {
-	console.log('Got disconnect!');
-	var i = allUsers.indexOf(socket);
-	allUsers.splice(i, 1);
-	io.emit('usersConnected', this.allUsers.length)
-   });
-});
-
-
 
 const Message = require('../server/models/Message');
 Message.watch([
