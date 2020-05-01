@@ -112,14 +112,14 @@ export default {
       }
       this.userMessage = null;
       await axios
-        .post("http://localhost:3000/api/user/send", message)
+        .post("/api/user/send", message)
         .then(response => response.data);
       this.getMessages();
       this.scroll();
     },
     async getMessages() {
       let messageData = null;
-      await axios.get("http://localhost:3000/api/user/messages").then(response => {
+      await axios.get("/api/user/messages").then(response => {
         let msgs = response.data;
         this.messageData = msgs.slice(-15);
       });
