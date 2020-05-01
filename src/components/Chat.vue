@@ -111,7 +111,7 @@ export default {
       });
       this.otherMessages = this.messageData;
       console.log(this.otherMessages);
-      setTimeout(this.getMessages(), 100);
+      setTimeout(this.getMessages(), 1000);
     }
   },
   updated() {
