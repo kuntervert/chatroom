@@ -40,10 +40,10 @@ io.sockets.on('connection', function(socket) {
 });
 
 io.on('connection', function (socket) {
-    io.emit('usersConnected', allUsers)
+    io.emit('usersConnected', this.allUsers)
 });
 io.on('disconnect', function (socket) {
-    io.emit('usersDisconnected', allUsers)
+    io.emit('usersDisconnected', this.allUsers)
 });
 
 
