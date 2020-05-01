@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const router = require('./router.js');
 const cors = require('cors');
-
+const fs = require('fs');
 // Initialize express
 const app = express();
 
@@ -21,10 +21,15 @@ app.use(
 		]
 	})
 );
+var options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/example.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/example.com/cert.pem'),
+    ca: fs.readFileSync('/etc/letsencrypt/live/example.com/chain.pem')
+};
 // API router
 app.use('/api', router);
 // Start express application
-var http = require( "https" ).createServer( app );
+var http = require( "https" ).createServer(options, app );
 var io = require('socket.io')(http);
 http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 
