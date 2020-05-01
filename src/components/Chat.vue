@@ -27,7 +27,9 @@
             <v-row style="background-color: #DEC0F9;border-radius: 5px;">
               <div style="width:100%; padding-left:2%; text-align: left">{{m.messageText}}</div>
             </v-row>
+            
           </v-col>
+          <small v-if="typing" class="text-white">{{typing}} is typing</small>
         </v-container>
       </perfect-scrollbar>
     </v-card>
@@ -67,6 +69,7 @@ export default {
   },
   data: () => ({
     username: null,
+    typing: false,
     otherMessages: null,
     userMessage: null,
     connections: 0,
@@ -75,9 +78,14 @@ export default {
   created() {
     this.messageWatch()
     this.usersWatch()
+    this.isTyping()
+    this.notTyping()
      socket.on('connections', (data) => {
                 this.connections = data;
-            });
+    });
+
+
+
   },
   mounted() {
     this.username = this.userData;
@@ -93,6 +101,16 @@ export default {
       document.getElementById("container").scrollTop = document.getElementById(
         "container"
       ).scrollHeight;
+    },
+    isTyping() {
+    socket.on('typing', (data) => {
+        this.typing = data;
+    });
+    },
+    notTyping() {
+    socket.on('stopTyping', () => {
+        this.typing = false;
+    });
     },
     messageWatch() {
       socket.on('message', data => {
@@ -144,6 +162,11 @@ export default {
       this.otherMessages = this.messageData;
     }
   },
+   watch: {
+    userMessage(value) {
+        value ? socket.emit('typing', this.$store.state.user.userId) : socket.emit('stopTyping')
+    }
+},
   updated() {
     this.scroll();
 

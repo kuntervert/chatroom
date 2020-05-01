@@ -30,6 +30,13 @@ http.listen(process.env.PORT, () => console.log(`App listening on port ${process
 io.on('connection', (socket) => {
 	socket.emit('connections', Object.keys(io.sockets.connected).length);
 	console.log(Object.keys(io.sockets.connected).length)
+	socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', (data));
+    });
+
+    socket.on('stopTyping', () => {
+        socket.broadcast.emit('stopTyping');
+    });
  });
 
 
