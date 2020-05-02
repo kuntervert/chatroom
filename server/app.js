@@ -21,15 +21,11 @@ app.use(
 		]
 	})
 );
-var options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/example.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/example.com/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/example.com/chain.pem')
-};
+
 // API router
 app.use('/api', router);
 // Start express application
-var http = require( "http" ).createServer(options, app );
+var http = require( "http" ).createServer( app );
 var io = require('socket.io')(http);
 http.listen(3000, () => console.log(`App listening on port ${process.env.PORT}`));
 
