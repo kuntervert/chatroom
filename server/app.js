@@ -30,7 +30,7 @@ const options = {
 // API router
 app.use('/api', router);
 // Start express application
-var http = require( "http" ).Server(options, app );
+var http = require( "https" ).Server(options, app );
 var io = require('socket.io')(http);
 http.listen(3000, () => console.log(`App listening on port ${process.env.PORT}`));
 
