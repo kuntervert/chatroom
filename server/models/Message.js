@@ -12,7 +12,8 @@ const messageSchema = mongoose.Schema({
 	},
 	messageDate: {
 		type: String,
-		required: true
+		required: true,
+		expires: 20000
 	}
 });
 
