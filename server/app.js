@@ -31,7 +31,7 @@ app.use('/api', router);
 // Start express application
 var http = require( "https" ).createServer(options, app );
 var io = require('socket.io')(http);
-http.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
+http.listen(3000, () => console.log(`App listening on port ${process.env.PORT}`));
 
 io.on('connection', (socket) => {
 	socket.emit('connections', Object.keys(io.sockets.connected).length);
