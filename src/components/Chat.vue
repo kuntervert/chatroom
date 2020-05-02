@@ -2,10 +2,12 @@
   <div style>
     <v-row>
       <h3>Logged in as: {{userData}}</h3>
-
+      <v-col class="onlineBox">
+        <div v-for="(u, index) in onlineUsers" :key="index">{{onlineUsers}}</div>
+      </v-col>
     </v-row>
     <v-row>
-          <h4>Users online: {{connections}}</h4>
+      <h4>Users online: {{connections}}</h4>
     </v-row>
     <v-card outlined class="chatCard">
       <perfect-scrollbar style="max-width: 45vw; background-color: #EFDEFF;">
@@ -27,14 +29,12 @@
             <v-row style="background-color: #DEC0F9;border-radius: 5px;">
               <div style="width:100%; padding-left:2%; text-align: left">{{m.messageText}}</div>
             </v-row>
-            
           </v-col>
-          
         </v-container>
-
       </perfect-scrollbar>
-              <small v-if="typing" class="text-white">{{typing}} is typing</small>
+      <small v-if="typing" class="text-white">{{typing}} is typing</small>
     </v-card>
+
     <v-row>
       <v-col class="inputCol">
         <v-textarea
@@ -60,12 +60,11 @@
 import axios from "axios";
 import { mapGetters } from "vuex";
 import { PerfectScrollbar } from "vue2-perfect-scrollbar";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
-const socket = io('https://devert.ee:3000');
+const socket = io("https://devert.ee:3000");
 
 export default {
-  
   components: {
     PerfectScrollbar
   },
@@ -74,29 +73,27 @@ export default {
     typing: false,
     otherMessages: null,
     userMessage: null,
+    onlineUsers: null,
     connections: 0,
     messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
   }),
   created() {
-    this.messageWatch()
-    this.usersWatch()
-    this.isTyping()
-    this.notTyping()
-     socket.on('connections', (data) => {
-                this.connections = data;
+    this.messageWatch();
+    this.usersWatch();
+    this.isTyping();
+    this.notTyping();
+    this.sendOnline();
+    this.whoOnline();
+    socket.on("connections", data => {
+      this.connections = data;
     });
-
-
-
   },
   mounted() {
     this.username = this.userData;
     this.getMessages();
-    
   },
   computed: {
     ...mapGetters(["userData"])
-    
   },
   methods: {
     scroll: function() {
@@ -104,27 +101,40 @@ export default {
         "container"
       ).scrollHeight;
     },
+    sendOnline() {
+      socket.on("user", inf => {
+        console.log(inf);
+        socket.emit("getOnline", this.$store.state.user.userId);
+      });
+    },
+    whoOnline() {
+      socket.on("onlineUser", data => {
+        this.onlineUsers.push(data);
+        console.log(data);
+        console.log(this.onlineUsers);
+      });
+    },
     isTyping() {
-    socket.on('typing', (data) => {
+      socket.on("typing", data => {
         this.typing = data;
-    });
+      });
     },
     notTyping() {
-    socket.on('stopTyping', () => {
+      socket.on("stopTyping", () => {
         this.typing = false;
-    });
+      });
     },
     messageWatch() {
-      socket.on('message', data => {
-      console.log("new mes message")
-      console.log(data)
-      this.getMessages()
-    });
+      socket.on("message", data => {
+        console.log("new mes message");
+        console.log(data);
+        this.getMessages();
+      });
     },
     usersWatch() {
-      socket.on('getCount', data => {
-      this.userCount = data
-    });
+      socket.on("getCount", data => {
+        this.userCount = data;
+      });
     },
     async sendMessages() {
       var currentDate = new Date();
@@ -137,7 +147,7 @@ export default {
         deit = hours + ":" + minutes;
       }
       if (this.userMessage === "") {
-        return
+        return;
       }
       if (this.userMessage.length > 200) {
         return;
@@ -147,7 +157,7 @@ export default {
         messageText: this.userMessage,
         messageDate: deit
       };
-      
+
       this.userMessage = null;
       await axios
         .post("/api/user/send", message)
@@ -164,21 +174,29 @@ export default {
       this.otherMessages = this.messageData;
     }
   },
-   watch: {
+  watch: {
     userMessage(value) {
-        value ? socket.emit('typing', this.$store.state.user.userId) : socket.emit('stopTyping')
+      value
+        ? socket.emit("typing", this.$store.state.user.userId)
+        : socket.emit("stopTyping");
     }
-},
+  },
   updated() {
     this.scroll();
-
-  },
+  }
 };
 </script>
 
 <style scoped lang="scss">
 .v-application {
   overflow-y: hidden;
+}
+.onlineBox {
+  margin-left: 46%;
+  position: fixed;
+  max-width: 30vw;
+  margin-top: 5%;
+  height: 50vh;
 }
 .chatCard {
   border-color: #9a62e4;
@@ -211,6 +229,5 @@ export default {
 }
 
 @media only screen and (max-width: 600px) {
-
 }
 </style>

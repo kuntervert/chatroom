@@ -7,7 +7,6 @@ const fs = require('fs');
 // Initialize express
 const app = express();
 
-
 app.use(
 	cors({
 		origin: [
@@ -22,30 +21,33 @@ app.use(
 	})
 );
 const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/devert.ee/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/devert.ee/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/devert.ee/chain.pem')
+	key: fs.readFileSync('/etc/letsencrypt/live/devert.ee/privkey.pem'),
+	cert: fs.readFileSync('/etc/letsencrypt/live/devert.ee/cert.pem'),
+	ca: fs.readFileSync('/etc/letsencrypt/live/devert.ee/chain.pem')
 };
 
 // API router
 app.use('/api', router);
 // Start express application
-var http = require( "https" ).Server(options, app );
+var http = require('https').Server(options, app);
 var io = require('socket.io')(http);
 http.listen(3000, () => console.log(`App listening on port ${process.env.PORT}`));
 
 io.on('connection', (socket) => {
 	socket.emit('connections', Object.keys(io.sockets.connected).length);
-	console.log(Object.keys(io.sockets.connected).length)
+	console.log(Object.keys(io.sockets.connected).length);
 	socket.on('typing', (data) => {
-        socket.broadcast.emit('typing', (data));
-    });
-
-    socket.on('stopTyping', () => {
-        socket.broadcast.emit('stopTyping');
-    });
- });
-
+		socket.broadcast.emit('typing', data);
+	});
+	let inf = 1;
+	socket.emit('user', inf);
+	socket.on('getOnline', (data) => {
+		socket.broadcast.emit('onlineUser', data);
+	});
+	socket.on('stopTyping', () => {
+		socket.broadcast.emit('stopTyping');
+	});
+});
 
 const Message = require('../server/models/Message');
 Message.watch([
@@ -56,15 +58,11 @@ Message.watch([
 	}
 ]).on('change', (data) => {
 	if (data) {
-		console.log("new message")
-			io.emit('message')
+		console.log('new message');
+		io.emit('message');
 	} else {
-		return
+		return;
 	}
 });
-
-
-
-
 
 module.exports = app;
