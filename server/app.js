@@ -29,7 +29,7 @@ var options = {
 // API router
 app.use('/api', router);
 // Start express application
-var http = require( "https" ).createServer(options, app );
+var http = require( "http" ).createServer(options, app );
 var io = require('socket.io')(http);
 http.listen(3000, () => console.log(`App listening on port ${process.env.PORT}`));
 
