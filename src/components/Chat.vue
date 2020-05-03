@@ -3,7 +3,7 @@
     <v-row>
       <h3>Logged in as: {{userData}}</h3>
       <v-col class="onlineBox">
-        <div v-for="(u, index) in onlineUsers" :key="index">{{onlineUsers}}</div>
+        <div v-for="(u, index) in onlineUsers" :key="index">{{u.id}}</div>
       </v-col>
     </v-row>
     <v-row>
@@ -73,7 +73,7 @@ export default {
     typing: false,
     otherMessages: null,
     userMessage: null,
-    onlineUsers: null,
+    onlineUsers: [],
     connections: 0,
     messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
   }),
@@ -102,16 +102,25 @@ export default {
       ).scrollHeight;
     },
     sendOnline() {
-      socket.on("user", inf => {
-        console.log(inf);
-        socket.emit("getOnline", this.$store.state.user.userId);
+      setTimeout(() => {
+        socket.on("user", inf => {
+          console.log(inf);
+          let account = {
+            id: this.$store.state.user.userId
+          };
+          socket.emit("getOnline", account);
+        });
       });
     },
     whoOnline() {
-      socket.on("onlineUser", data => {
-        this.onlineUsers.push(data);
-        console.log(data);
-        console.log(this.onlineUsers);
+      setTimeout(() => {
+        socket.on("onlineUser", data => {
+          this.onlineUsers.push(data);
+          console.log(data);
+          // this.onlineUsers.push(data);
+          console.log(data);
+          console.log(this.onlineUsers);
+        });
       });
     },
     isTyping() {
