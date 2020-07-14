@@ -27,6 +27,8 @@ module.exports = {
 				const newUser = new User(req.body);
 				await newUser.save();
 				res.status(200).json({ status: 'OK' });
+			} else if ((await User.findOne({ userId: req.body.userId })) !== null) {
+				res.status(401).json({ status: 'Username taken' });
 			}
 		} catch (error) {
 			res.status(503).json({ status: 'error' });

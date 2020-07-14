@@ -32,21 +32,28 @@ app.use('/api', router);
 var http = require('https').Server(options, app);
 var io = require('socket.io')(http);
 http.listen(3000, () => console.log(`App listening on port ${process.env.PORT}`));
-
+let newAccs = [];
 io.on('connection', (socket) => {
-	socket.emit('connections', Object.keys(io.sockets.connected).length);
-	console.log(Object.keys(io.sockets.connected).length);
-	socket.on('typing', (data) => {
-		socket.broadcast.emit('typing', data);
-	});
-	let inf = 1;
-	socket.emit('user', inf);
+	// let ipAddress = socket.handshake.address;
+	io.sockets.emit('connections', Object.keys(io.sockets.connected).length);
+	console.log('new connection');
+	console.log('clients: ', Object.keys(io.sockets.connected).length);
 	socket.on('getOnline', (data) => {
-		socket.broadcast.emit('onlineUser', data);
+		newAccs.push(data);
+		console.log(data);
+		io.sockets.emit('newConnection', newAccs);
 	});
+
 	socket.on('stopTyping', () => {
 		socket.broadcast.emit('stopTyping');
 	});
+	socket.on('typing', (data) => {
+		socket.broadcast.emit('typing', data);
+	});
+});
+io.on('disconnect', (socket) => {
+	socket.emit('connections', Object.keys(io.sockets.connected).length);
+	console.log('client disconnected, new number:', Object.keys(io.sockets.connected).length);
 });
 
 const Message = require('../server/models/Message');
@@ -58,7 +65,6 @@ Message.watch([
 	}
 ]).on('change', (data) => {
 	if (data) {
-		console.log('new message');
 		io.emit('message');
 	} else {
 		return;

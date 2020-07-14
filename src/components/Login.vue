@@ -21,6 +21,7 @@
             </v-col>
           </v-row>
           <v-btn class="loginBtn" @keydown.enter="testLogin()" @click="testLogin()">Login</v-btn>
+          <v-row style="justify-content: space-around; color: #E5BEED">{{loginError}}</v-row>
         </v-container>
       </v-card>
     </v-row>
@@ -34,7 +35,8 @@ import { mapActions } from "vuex";
 export default {
   data: () => ({
     username: "",
-    nameRules: [v => v.length <= 25 || "Username must be shorter"]
+    nameRules: [v => v.length <= 25 || "Username must be shorter"],
+    loginError: null
   }),
   methods: {
     ...mapActions(["login"]),
@@ -44,6 +46,10 @@ export default {
         userId: this.username,
         createdAt: date
       };
+      if (this.username.length > 25) {
+        this.loginError = "Username is too long";
+        return;
+      }
       try {
         await axios
           .post("/api/user/login", userInfo)
@@ -51,7 +57,7 @@ export default {
         await this.login(userInfo);
         this.$router.push("/chat");
       } catch (error) {
-        console.log(error);
+        this.loginError = "Username already taken";
       }
     }
   }

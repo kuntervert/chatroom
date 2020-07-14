@@ -1,58 +1,53 @@
 <template>
-  <div style>
-    <v-row>
-      <h3>Logged in as: {{userData}}</h3>
-      <v-col class="onlineBox">
-        <div v-for="(u, index) in onlineUsers" :key="index">{{u.id}}</div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <h4>Users online: {{connections}}</h4>
-    </v-row>
-    <v-card outlined class="chatCard">
-      <perfect-scrollbar style="max-width: 45vw; background-color: #EFDEFF;">
-        <v-container
-          id="container"
-          ref="messageDisplay"
-          style="max-height:50vh; max-width: 40vw; margin-left:5% "
-        >
-          <v-col
-            style=" max-height:20%; padding-left: 0; "
-            v-for="(m, index) in otherMessages"
-            :key="index"
-          >
-            <v-row style="background-color: #D5AAFC;border-radius: 5px">
-              <div
-                style=" width:100%;padding-left:2%; text-align:left"
-              >{{m.userId}} ({{m.messageDate}})</div>
-            </v-row>
-            <v-row style="background-color: #DEC0F9;border-radius: 5px;">
-              <div style="width:100%; padding-left:2%; text-align: left">{{m.messageText}}</div>
-            </v-row>
-          </v-col>
-        </v-container>
-      </perfect-scrollbar>
-      <small v-if="typing" class="text-white">{{typing}} is typing</small>
-    </v-card>
-
-    <v-row>
-      <v-col class="inputCol">
-        <v-textarea
-          class="msgField"
-          rounded
-          outlined
-          rows="2"
-          :rules="messageRules"
-          no-resize
-          v-model="userMessage"
-          label="Type your message..."
-          v-on:keyup.enter="sendMessages"
-        ></v-textarea>
-      </v-col>
-      <v-col class="msgBtnCol">
-        <v-btn class="msgBtn" @click="sendMessages()">Send</v-btn>
-      </v-col>
-    </v-row>
+  <div class="mainDiv">
+    <v-col class="mainCol">
+      <v-row class="usernameRow">
+        <h3>Logged in as: {{userData}}</h3>
+      </v-row>
+      <v-row class="onlineCounterRow">
+        <h4>Users online: {{userCount}}</h4>
+      </v-row>
+      <v-row class="chatRow">
+        <v-col class="chatCol">
+          <v-card outlined class="chatCard">
+            <perfect-scrollbar class="scrollBar">
+              <v-container id="container" ref="messageDisplay" class="chatContainer">
+                <v-col class="messageCol" v-for="(m, index) in otherMessages" :key="index">
+                  <v-row class="userRow">
+                    <div class="userDiv">{{m.userId}} ({{m.messageDate}})</div>
+                  </v-row>
+                  <v-row class="messageRow">
+                    <div class="messageDiv">{{m.messageText}}</div>
+                  </v-row>
+                </v-col>
+              </v-container>
+            </perfect-scrollbar>
+            <small v-if="typing" class="text-white">{{typing}} is typing...</small>
+          </v-card>
+        </v-col>
+        <v-col class="onlineBox">
+          <v-row class="onlineBoxHeader">Users chatting:</v-row>
+          <div class="onlineUserRow" v-for="(u, index) in onlineUsers" :key="index">{{u.id}}</div>
+        </v-col>
+      </v-row>
+      <v-row class="inputRow">
+        <v-col class="inputCol">
+          <v-textarea
+            class="msgField"
+            rounded
+            outlined
+            rows="2"
+            no-resize
+            v-model="userMessage"
+            label="Type your message..."
+            v-on:keyup.enter="sendMessages"
+          ></v-textarea>
+        </v-col>
+        <v-col class="msgBtnCol">
+          <v-btn class="msgBtn" @click="sendMessages()">Send</v-btn>
+        </v-col>
+      </v-row>
+    </v-col>
   </div>
 </template>
 <script src="/socket.io/socket.io.js"></script>
@@ -74,23 +69,31 @@ export default {
     otherMessages: null,
     userMessage: null,
     onlineUsers: [],
-    connections: 0,
-    messageRules: [v => v.length <= 200 || "Message characted limit exceeded"]
+    userCount: 0
   }),
   created() {
     this.messageWatch();
-    this.usersWatch();
     this.isTyping();
     this.notTyping();
-    this.sendOnline();
     this.whoOnline();
-    socket.on("connections", data => {
-      this.connections = data;
-    });
   },
   mounted() {
     this.username = this.userData;
     this.getMessages();
+    let account = {
+      id: this.$store.state.user.userId
+    };
+
+    socket.on("connect", () => {
+      socket.emit("getOnline", account);
+    });
+
+    socket.on("connections", data => {
+      this.userCount = data;
+    });
+    socket.on("newConnection", data => {
+      this.onlineUsers = data;
+    });
   },
   computed: {
     ...mapGetters(["userData"])
@@ -101,26 +104,9 @@ export default {
         "container"
       ).scrollHeight;
     },
-    sendOnline() {
-      setTimeout(() => {
-        socket.on("user", inf => {
-          console.log(inf);
-          let account = {
-            id: this.$store.state.user.userId
-          };
-          socket.emit("getOnline", account);
-        });
-      });
-    },
     whoOnline() {
-      setTimeout(() => {
-        socket.on("onlineUser", data => {
-          this.onlineUsers.push(data);
-          console.log(data);
-          // this.onlineUsers.push(data);
-          console.log(data);
-          console.log(this.onlineUsers);
-        });
+      socket.on("onlineUser", data => {
+        this.onlineUsers = data;
       });
     },
     isTyping() {
@@ -135,16 +121,14 @@ export default {
     },
     messageWatch() {
       socket.on("message", data => {
-        console.log("new mes message");
-        console.log(data);
         this.getMessages();
       });
     },
-    usersWatch() {
-      socket.on("getCount", data => {
-        this.userCount = data;
-      });
-    },
+    // sendUserCount() {
+    //   let data = 10;
+    //   socket.emit("newConnection", data);
+    // },
+
     async sendMessages() {
       var currentDate = new Date();
       let deit = null;
@@ -198,20 +182,59 @@ export default {
 
 <style scoped lang="scss">
 .v-application {
-  overflow-y: hidden;
+  margin-top: 0;
 }
-.onlineBox {
-  margin-left: 46%;
-  position: fixed;
-  max-width: 30vw;
-  margin-top: 5%;
-  height: 50vh;
+.mainDiv {
+  display: flex;
+  height: 80vh;
+  margin-left: 2%;
+  margin-top: 2%;
+  max-width: 45vw;
 }
+.mainCol {
+  max-width: 45vw;
+}
+.chatCol {
+  padding-left: 0;
+}
+
 .chatCard {
   border-color: #9a62e4;
   opacity: 1;
   max-width: 45vw;
   border-radius: 35px !important;
+}
+.scrollBar {
+  max-width: 45vw;
+  background-color: #efdeff;
+}
+.messageCol {
+  max-height: 20%;
+  padding-left: 0;
+}
+.chatContainer {
+  max-height: 50vh;
+  max-width: 40vw;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+.userRow {
+  background-color: #d5aafc;
+  border-radius: 5px;
+}
+.userDiv {
+  width: 100%;
+  padding-left: 2%;
+  text-align: left;
+}
+.messageRow {
+  background-color: #dec0f9;
+  border-radius: 5px;
+}
+.messageDiv {
+  width: 100%;
+  padding-left: 2%;
+  text-align: left;
 }
 .msgBtnCol {
   max-width: fit-content;
@@ -229,12 +252,31 @@ export default {
 .msgField {
   max-width: 100%;
 }
+.inputRow {
+  max-width: 75%;
+}
 .inputCol {
-  max-width: 27%;
-  margin-left: 3%;
+  max-width: 90%;
 }
 .msgRow {
   max-width: 60%;
+}
+.onlineBox {
+  position: relative;
+  max-width: 25%;
+  height: 100%;
+  margin-left: 5%;
+  background-color: #ebd5ff !important;
+  border-radius: 15px !important;
+}
+.onlineBoxHeader {
+  justify-content: left;
+  max-width: 100%;
+  padding-left: 4%;
+}
+.onlineUserRow {
+  padding-top: 5%;
+  text-align: left;
 }
 
 @media only screen and (max-width: 600px) {

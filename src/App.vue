@@ -1,13 +1,7 @@
 <template>
   <v-app>
     <v-content>
-      <v-container>
-        <v-layout text-center wrap>
-          <v-flex>
-            <router-view />
-          </v-flex>
-        </v-layout>
-      </v-container>
+      <router-view />
     </v-content>
   </v-app>
 </template>
@@ -26,6 +20,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 </style>
