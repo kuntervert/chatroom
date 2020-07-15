@@ -26,7 +26,7 @@
           </v-card>
         </v-col>
         <v-col class="onlineBox">
-          <v-row class="onlineBoxHeader">Users chatting:</v-row>
+          <v-row class="onlineBoxHeader">Registered users:</v-row>
           <div class="onlineUserRow" v-for="(u, index) in onlineUsers" :key="index">{{u.id}}</div>
         </v-col>
       </v-row>
